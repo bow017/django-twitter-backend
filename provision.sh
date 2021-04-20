@@ -26,7 +26,7 @@ else
   echo "pip3 installed"
 fi
 
-# 升级pip，目前存在问题，read timed out，看脸，有时候可以，但大多时候不行
+# 升级pip，目前存在问题，read timed out
 # python -m pip install --upgrade pip
 # 换源完美解决
 # 安装pip所需依赖
@@ -47,6 +47,27 @@ sudo mysql -u root << EOF
 	CREATE DATABASE IF NOT EXISTS twitter;
 EOF
 # fi
+
+# superuser名字
+USER="admin"
+# superuser密码
+PASS="admin"
+# superuser邮箱
+MAIL="admin@twitter.com"
+script="
+from django.contrib.auth.models import User;
+
+username = '$USER';
+password = '$PASS';
+email = '$MAIL';
+
+if not User.objects.filter(username=username).exists():
+    User.objects.create_superuser(username, email, password);
+    print('Superuser created.');
+else:
+    print('Superuser creation skipped.');
+"
+printf "$script" | python manage.py shell
 
 
 # 如果想直接进入/vagrant路径下
